@@ -1,0 +1,6 @@
+the updater is the main control process of the system.
+it uses a pipe to get infornmation from hoppers.
+the updater runs the hopper module as a seperate process
+the hopper sends the package,version pairs to the updater where it compares
+it to a databse of latest versions, if the version is newer, then it generates a new PKGBUILD
+and sends it to the storage.

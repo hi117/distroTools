@@ -1,0 +1,20 @@
+the pacman wrapper that makes this distrobution possible is defined here
+it consists of a series of modules that work togeather as follows:
+    Hopper provides infornmation to complete PKGBUILD.in files
+    Updater
+    Storage stores the completed PKGBUILD and retrieves it on the client machine
+    Builder builds the package for local use
+all parts are modular, these modules are available as of now:
+    Hopper:
+        feed: provides jobs through a series of modules that querry sources
+            they are arranged in a queue that arranges them by time of next querry
+            when an update is found, the infornmation is sent to the updater
+    Updater:
+        provides a module that puts the data from the updater into a 
+        PKGBUILD.in and moves it to the storage module, it also privides
+        an interface for forcing an update due to an updated PKGBUILD.in
+    Storage:
+        a storage method for retrieving and sending PKGBUILD files generated
+        by the Updater.  This will probably be a network filesystem implementation
+    Builder:
+        builds a PKGBUILD for the local system.  can be automatic or manual
