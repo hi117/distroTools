@@ -17,8 +17,6 @@ def buildpkg(data):
     path='pkgs/'+data[0]
     PKGBUILD=open(path+'/PKGBUILD.in','r').read().replace('%n',data[0]).replace('%v',data[1]).replace('%%','%')
     
-    # send it to the storage module
-    storage.store(path,PKGBUILD)
 
 def process(data):
     '''
