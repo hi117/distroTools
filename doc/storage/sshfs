@@ -1,0 +1,5 @@
+This module implements a storage system with the interface of
+store(path,PKGBUILD) where path is a path to a directory to include and PKGBUILD
+is a string containing the data to write to the sshfs system.
+Upon init, it ensures the proper places are mounted and stay mounted throughout the process
+

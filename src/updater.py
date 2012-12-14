@@ -1,8 +1,9 @@
 from multiprocessing import Process,Pipe
 import importhelper
 from kyotocabinet import *
+import debug as storage
 
-global db = DB()
+db = DB()
 assert db.open('pkgverdb.ksh', DB.OWRITER | DB.OREADER | DB.OCREATE), 'error opening db'
 
 def buildpkg(data):

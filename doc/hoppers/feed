@@ -1,0 +1,7 @@
+feed is a hopper module that uses a series of feeds arranged in a querrys tyle system
+an entry is added to the in a position based on when it is next sceduled to be executed
+a feed is a python class that implements the following:
+    scedule: a string defining how often to execute the feed
+    run: a method to retrieve the resource, it returns as follows:
+        a list of package, version pairs, it is deretmined by the updater which ones are considered new
+a feed is instanced by unmarshaling and instancing

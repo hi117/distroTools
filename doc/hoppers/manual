@@ -1,0 +1,2 @@
+This hopper is for manually specifying versions, packages, or generall debugging.
+It creates a FIFO which is then written to to provide data.
