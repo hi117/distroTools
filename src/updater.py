@@ -1,10 +1,12 @@
+import os
+import os.path
 from multiprocessing import Process,Pipe
-import importhelper
+from importhelper import load
 from kyotocabinet import *
 import debug as storage
 
 db = DB()
-assert db.open('pkgverdb.ksh', DB.OWRITER | DB.OREADER | DB.OCREATE), 'error opening db'
+assert db.open('pkgverdb.kch', DB.OWRITER | DB.OREADER | DB.OCREATE), 'error opening db'
 
 def buildpkg(data):
     '''
@@ -27,14 +29,16 @@ def process(data):
     this funciton determines if an update is needed and builds it
     '''
     # determine if the version they gave is newer than the current version
-    ver=[]
+    ver=''
     for i in data[1]:
         if i.isdigit():
-            ver.append(i)
-    vercur=[]
-    for i in db[data[0]]:
-        if i.isdigit():
-            vercur.append(i)
+            ver+=i
+    vercur=''
+    if db[data[0]]:
+        for i in db[data[0]]:
+            if i.isdigit():
+                vercur+=i
+    if vercur == '': vercur='-1'
     if int(ver) > int(vercur):
         # the version is newer
         buildpkg(data)
@@ -47,13 +51,15 @@ recvp, sendp = Pipe()
 # load the hoppers
 modules=[]
 for i in os.listdir('hoppers'):
+    if os.path.isdir('hoppers/'+i):
+        continue
     modules.append(load('hoppers/'+i))
 
 # run the hoppers
 hopperp=[]
 for i in modules:
-    print("Starting "+i.__str__)
-    p = Process(target=hopperp.run, args=(sendp,))
+    print("Starting "+i.__str__())
+    p = Process(target=i.run, args=(sendp,))
     p.start()
     hopperp.append(p)
 
