@@ -1,13 +1,13 @@
-the pacman wrapper that makes this distrobution possible is defined here
+the pacman wrapper that makes this distribution possible is defined here
 it consists of a series of modules that work togeather as follows:
     Hopper provides infornmation to complete PKGBUILD.in files
-    Updater
+    Updater generates a PKGBUILD
     Storage stores the completed PKGBUILD and retrieves it on the client machine
     Builder builds the package for local use
-all parts are modular, these modules are available as of now:
+all parts are modular, the modules available so far are:
     Hopper:
-        feed: provides jobs through a series of modules that querry sources
-            they are arranged in a queue that arranges them by time of next querry
+        feed: provides jobs through a series of modules that query sources
+            they are arranged in a queue that arranges them by time of next query
             when an update is found, the infornmation is sent to the updater
     Updater:
         provides a module that puts the data from the updater into a 
