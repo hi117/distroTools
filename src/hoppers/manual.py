@@ -1,15 +1,18 @@
 import os
 from os.path import exists
-import utils.configParser
+import utils.configParser as configParser
+from time import sleep
 
 def run(pipe):
     # parse the config
     config = configParser.parse('manual.conf')['']
     
     # create a fifo
-    if not exists(config['fifoPath'])
+    if not exists(config['fifoPath']):
         os.mkfifo(config['fifoPath'])
     with open(config['fifoPath'], 'r') as f:
         while not f.closed:
             a = f.readline()
-            pipe.send(a.split(','))
+            if a != '':
+                pipe.send(a.split(','))
+            sleep(2)

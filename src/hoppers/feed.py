@@ -19,12 +19,12 @@ def calcNextRuntime(feed):
     '''
     # caculate seconds until next run
     units = {
-            's': 1
-            'm': 60
-            'h': 3600
-            'd': 86400
-            'w': 604800
-            'mo': 2592000 # month assumes 30 days
+            's': 1,
+            'm': 60,
+            'h': 3600,
+            'd': 86400,
+            'w': 604800,
+            'mo': 2592000, # month assumes 30 days
             'y': 31536000 # year assumes 365 days
             }
     if feed.scedule[-1] in units:
@@ -58,7 +58,7 @@ def run(pipe):
     
     # load all the feeds
     feeds = []
-    for i in config['feeds']
+    for i in config['feeds']:
         feeds.append(load(config['feeddir'] + '/' + i + '.py'))
 
     # generate the inital queue

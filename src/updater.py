@@ -8,6 +8,8 @@ from utils.configParser import parse as confParse
 db = DB()
 assert db.open('pkgverdb.kch', DB.OWRITER | DB.OREADER | DB.OCREATE), 'error opening db'
 
+config = {}
+
 def processConfig(config):
     config['hoppers'] = map(lambda a: a.strip(), config['hoppers'].split(','))
     config['storages'] = map(lambda a: a.strip(), config['storages'].split(','))
@@ -19,7 +21,7 @@ def buildpkg(data):
     it replaces %n with data[0], %v with data[1], and %% with %
     '''
     # determine the PKGBUILD.in to use
-    if not data[0] in os.listdir('pkgs'): 
+    if not data[0] in os.listdir(config['pkgdir']): 
         print(data[0] + ' not in directory')
         return
     path = 'pkgs/'+data[0]
@@ -58,7 +60,7 @@ def process(data):
         if rev > int(revcur):
             # the version is newer
             buildpkg(data)
-            db[data[0]] = ','.join(data[1], data[2])
+            db[data[0]] = ','.join([data[1], data[2]])
 
 # parse the configuration file for options
 config = confParse('updater.conf')['']
@@ -95,7 +97,7 @@ while len(hopperp) != 0:
     process(data)
     n = 0
     while n < len(hopperp):
-        if hopperp[n].is_alive():
+        if not hopperp[n].is_alive():
             hopperp[n].join()
             hopperp.pop(n)
         else:
