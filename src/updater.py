@@ -47,8 +47,10 @@ def process(data):
     revcur = '1'
 
     vercur = ''
+    if db[data[0]]: print(b'db has: '+db[data[0]])
     if db[data[0]]:
-        for i in db[data[0]].split(',')[0]:
+        for i in db[data[0]].split(b',')[0]:
+            print(i)
             if i.isdigit():
                 vercur += i
         # grab the revision number
