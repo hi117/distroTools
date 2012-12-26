@@ -10,8 +10,6 @@ queue is structred as so:
 '''
 queue = []
 
-config = {}
-
 def calcNextRuntime(feed):
     '''
     This function takes a feed and evaluetes its scedule to determine at what 
@@ -47,18 +45,18 @@ def insertQueue(feed):
     queue.insert(a, [runtime, feed])
 
 def sleepUntilNext():
-    sleep(time() - queue[0][0])
+    sleep(queue[0][0] - time())
 
 def parseConfig():
-    config = configParser.parse('feed.conf')['']
+    return configParser.parse('feed.conf')['']
 
 def run(pipe):
     # parse the config
-    parseConfig()
+    config = parseConfig()
     
     # load all the feeds
     feeds = []
-    for i in config['feeds']:
+    for i in config['feeds'].split(','):
         feeds.append(load(config['feeddir'] + '/' + i + '.py'))
 
     # generate the inital queue
@@ -75,5 +73,5 @@ def run(pipe):
         # run the feed and send it to the updater
         for i in feed.run():
             pipe.send(i)
-
-
+        # reinsert it into the queue
+        insertQueue(feed)
