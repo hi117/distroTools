@@ -1,0 +1,3 @@
+the builder will use storage modules to retrieve new package versions and build them.
+the builder may also provide feedback to the updater system about failed 
+builds or PKGBUILD.in changes needed.
