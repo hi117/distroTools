@@ -50,16 +50,14 @@ def process(data):
     if db[data[0]]: print(b'db has: '+db[data[0]])
     if db[data[0]]:
         for i in db[data[0]].split(b',')[0]:
-            print(i)
-            if i.isdigit():
-                vercur += i
+            if chr(i).isdigit():
+                vercur += chr(i)
         # grab the revision number
-        revcur = int(db[data[0]].split(',')[1])
+        revcur = int(db[data[0]].split(b',')[1])
 
     if vercur == '': vercur = '-1'
 
-    if int(ver) > int(vercur):
-        if rev > int(revcur):
+    if (int(ver) > int(vercur)) or ((int(ver) == int(vercur)) and (int(rev) > int(revcur))):
             # the version is newer
             buildpkg(data)
             db[data[0]] = ','.join([data[1], data[2]])
