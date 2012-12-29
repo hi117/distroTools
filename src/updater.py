@@ -25,7 +25,7 @@ def buildpkg(data):
         print(data[0] + ' not in directory')
         return
     path = 'pkgs/'+data[0]
-    PKGBUILD = open(path + '/PKGBUILD.in', 'r').read().replace('%n', data[0]).replace('%v', data[1]).replace('%r', data[2]).replace('%%', '%')
+    PKGBUILD = open(path + '/PKGBUILD.in', 'r').read().replace('%n', data[0]).replace('%v', data[1]).replace('%r', data[2])
     
     # send it to the storage modules
     for i in storages:
