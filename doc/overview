@@ -18,3 +18,15 @@ all parts are modular, the modules available so far are:
         by the Updater.  This will probably be a network filesystem implementation
     Builder:
         builds a PKGBUILD for the local system.  can be automatic or manual
+    output:
+        output must be threaded so that threaded parts can use it.
+        each output module will implement a run method, which takes a queue object.
+        when the parent put()'s an object of the form (string,0 or 1), it outputs it appropiately.
+        the second part of the touple is wether the output is stderr or stdout, with 0 being
+        stdout and 1 being stderr.
+        file:
+            outputs stdout + stderr to seperate files
+        screen:
+            outputs stdout + stderr to the screen
+        socket:
+            outputs stdout + stderr to a socket
