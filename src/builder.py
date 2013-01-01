@@ -18,9 +18,8 @@ class package:
         self.reqby = []
 
 class Order:
-    def __init__(self, config):
+    def __init__(self):
         self.pkgs = []
-        self.config = config
         self.notBuilt = []
 
 def processConfig(config):
@@ -96,6 +95,12 @@ def findBottom(order, visited = []):
     #  no bottom has been found, so we are the bottom
     return visited.pop()
 
+def makepkg(order, pkg):
+    '''
+    This is where the magic happens. It takes a pkg object and runs makepkg in the package directory, making the package.
+    It also updates the order's hasBuilt list.
+    '''
+
 def buildPkgs(pkgs):
     '''
     This function takes a list of package names and builds them in the proper order.
@@ -107,5 +112,6 @@ def buildPkgs(pkgs):
     # build the order struct
     order = buildOrder(Order())
 
+    # loop over 
     # find a bottom
     bottom = findBottom(order)
