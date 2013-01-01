@@ -21,6 +21,7 @@ class Order:
     def __init__(self, config):
         self.pkgs = []
         self.config = config
+        self.notBuilt = []
 
 def processConfig(config):
     '''
@@ -63,20 +64,48 @@ def buildOrder(order):
             dep = getPkgFromOrder(order, i)
             if dep:
                 pkg.deps.append(dep)
+                dep.reqby.append(pkg)
 
-        # for each dependancy, add pkg to its reqby list
-        for i in pkg.deps:
-            i.reqby.append(pkg)
+    # populate the notBuilt list used for graph search starting
+    order.notBuilt = order.pkgs
+
     return order
+
+def findBottom(order, visited = []):
+    '''
+    This function finds a bottom and returns the pkg.
+    '''
+    # get a starting package if needed
+    if len(visited) == 0:
+        visited.append(order.notBuilt[0])
+    else: # else we check if we are a valid package for being looked at
+        if visited[-1].hasBuilt:
+            return None
+
+    # now we move down and see if we find a bottom
+    for i in visited[-1].deps:
+        # check for circular dependancies
+        # a circular dependancy occurs when i is already in our visited list
+        # it is handled by calling it a bottom
+        if i in visited:
+            return i
+        a = findBottom(order, visited + i)
+        if a:
+            return a
+    
+    #  no bottom has been found, so we are the bottom
+    return visited.pop()
 
 def buildPkgs(pkgs):
     '''
     This function takes a list of package names and builds them in the proper order.
     '''
-    # build and populate the order struct
-    order = Order()
-    order = buildOrder(order)
-    
     # copy over all the packages from storage to the local dir
     for i in pkgs:
         storage.get(i, config['basedir'])
+
+    # build the order struct
+    order = buildOrder(Order())
+
+    # find a bottom
+    bottom = findBottom(order)
