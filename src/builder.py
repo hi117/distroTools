@@ -1,6 +1,7 @@
 from multiprocessing import Pipe, Process
 from utils.importhelper import load
-from os import listdir
+from os import listdir, chdir, getcwd
+from subprocess import call
 
 config = {}
 
@@ -98,8 +99,27 @@ def findBottom(order, visited = []):
 def makepkg(order, pkg):
     '''
     This is where the magic happens. It takes a pkg object and runs makepkg in the package directory, making the package.
-    It also updates the order's hasBuilt list.
+    It also updates the order's hasBuilt list. For now it just calls makepkg -s --noconfirm.
     '''
+    #TODO: add a lot of features to the build process like a PKGBUILD mangle chain and error handling
+    oldcwd = getcwd()
+    chdir(config['basedir'] + '/' + pkg)
+    ret = call(['makepkg', '-s', '--noconfirm'])
+    
+    # set the has built and error fields
+    # makepkg returns 0 for ok and 1 for error
+    if ret == 1:
+        pkg.hasError = True
+    pkg.hasBuilt = True
+    
+    # remove package from the notBuilt list
+    n = 0
+    for i in order.notBuilt:
+        if i == pkg:
+            break
+    order.notBuilt.pop(n)
+
+    return ret
 
 def buildPkgs(pkgs):
     '''
@@ -112,6 +132,8 @@ def buildPkgs(pkgs):
     # build the order struct
     order = buildOrder(Order())
 
-    # loop over 
-    # find a bottom
+    # loop until findBottom returns none
     bottom = findBottom(order)
+    while bottom:
+        makepkg(bottom)
+        bottom = findBottom(order)
