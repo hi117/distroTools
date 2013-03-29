@@ -20,14 +20,14 @@ def buildpkg(data):
     this function takes a pkgname and a pkgversion and turns a PKGBUILD.in into a PKGBUILD
     it replaces %n with data[0], %v with data[1], and %% with %
     '''
-    # determine the PKGBUILD.in to use
+    # Determine the PKGBUILD.in to use
     if not data[0] in os.listdir(config['pkgdir']): 
         print(data[0] + ' not in directory')
         return
     path = 'pkgs/'+data[0]
     PKGBUILD = open(path + '/PKGBUILD.in', 'r').read().replace('%n', data[0]).replace('%v', data[1]).replace('%r', data[2])
     
-    # send it to the storage modules
+    # Send it to the storage modules
     for i in storages:
         i.store(path, PKGBUILD)
 
@@ -37,7 +37,7 @@ def process(data):
     this funciton determines if an update is needed and builds it
     '''
     print('Recieved data: ' + ','.join(data))
-    # determine if the version they gave is newer than the current version
+    # Determine if the version they gave is newer than the current version
     ver = ''
     for i in data[1]:
         if i.isdigit():
@@ -52,7 +52,7 @@ def process(data):
         for i in db[data[0]].split(b',')[0]:
             if chr(i).isdigit():
                 vercur += chr(i)
-        # grab the revision number
+        # Grab the revision number
         revcur = int(db[data[0]].split(b',')[1])
 
     if vercur == '': vercur = '-1'

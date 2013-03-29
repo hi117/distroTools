@@ -10,15 +10,21 @@ These classes below basically simulate structs as in C.
 '''
 
 class package:
+    '''
+    Stores a package for use in the updater script.
+    '''
     def __init__(self, name):
-        self.name = name
+        self.name     = name
         self.hasBuilt = False
         self.hasError = None
-        self.config = None
-        self.deps = []
-        self.reqby = []
+        self.config   = None
+        self.deps     = []
+        self.reqby    = []
 
 class Order:
+    '''
+    An update or installation of a package.
+    '''
     def __init__(self):
         self.pkgs = []
         self.notBuilt = []
@@ -32,7 +38,7 @@ def processConfig(config):
 
 def getPkgFromOrder(order, pkg):
     '''
-    This function takes a pkg by name and gets the package class from the order
+    This function takes a pkg by name and gets the package struct from the order
     '''
     for i in order.pkgs:
         if i.name == pkg:
@@ -45,10 +51,10 @@ def buildOrder(order):
 
     '''
     for p in listdir(config['basedir']):
-        # load the PKGBUILD
+        # Load the PKGBUILD
         pkgbuild = open(config['basedir'] + '/' + p + '/PKGBUILD').readlines()
 
-        # enumerate over lines stripping and looking for depends, makedepends
+        # Enumerate over lines stripping and looking for depends, makedepends
         dependancies = []
         for i in pkgbuild:
             i = i.strip(i)
@@ -58,7 +64,7 @@ def buildOrder(order):
                     if not j in dependancies:
                         dependancies.apend(j)
 
-        # get the pkg from the order and add the dependancies to it
+        # Get the pkg from the order and add the dependancies to it
         pkg = getPkgFromOrder(order, p)
         for i in dependancies:
             dep = getPkgFromOrder(order, i)
@@ -66,7 +72,7 @@ def buildOrder(order):
                 pkg.deps.append(dep)
                 dep.reqby.append(pkg)
 
-    # populate the notBuilt list used for graph search starting
+    # Populate the notBuilt list used for graph search starting
     order.notBuilt = order.pkgs
 
     return order
@@ -75,18 +81,18 @@ def findBottom(order, visited = []):
     '''
     This function finds a bottom and returns the pkg.
     '''
-    # get a starting package if needed
+    # Get a starting package if needed
     if len(visited) == 0:
         visited.append(order.notBuilt[0])
-    else: # else we check if we are a valid package for being looked at
+    else: # Else we check if we are a valid package for being looked at
         if visited[-1].hasBuilt:
             return None
 
-    # now we move down and see if we find a bottom
+    # Now we move down and see if we find a bottom
     for i in visited[-1].deps:
-        # check for circular dependancies
-        # a circular dependancy occurs when i is already in our visited list
-        # it is handled by calling it a bottom
+        # Check for circular dependancies
+        # A circular dependancy occurs when i is already in our visited list
+        # It is handled by calling it a bottom
         if i in visited:
             return i
         a = findBottom(order, visited + i)
@@ -101,18 +107,18 @@ def makepkg(order, pkg):
     This is where the magic happens. It takes a pkg object and runs makepkg in the package directory, making the package.
     It also updates the order's hasBuilt list. For now it just calls makepkg -s --noconfirm.
     '''
-    #TODO: add a lot of features to the build process like a PKGBUILD mangle chain and error handling
+    #TODO: Add a lot of features to the build process like a PKGBUILD mangle chain and error handling
     oldcwd = getcwd()
     chdir(config['basedir'] + '/' + pkg)
     ret = call(['makepkg', '-s', '--noconfirm'])
     
-    # set the has built and error fields
-    # makepkg returns 0 for ok and 1 for error
+    # Set the has built and error fields
+    # Makepkg returns 0 for ok and 1 for error
     if ret == 1:
         pkg.hasError = True
     pkg.hasBuilt = True
     
-    # remove package from the notBuilt list
+    # Remove package from the notBuilt list
     n = 0
     for i in order.notBuilt:
         if i == pkg:
@@ -125,14 +131,14 @@ def buildPkgs(pkgs):
     '''
     This function takes a list of package names and builds them in the proper order.
     '''
-    # copy over all the packages from storage to the local dir
+    # Copy over all the packages from storage to the local dir
     for i in pkgs:
         storage.get(i, config['basedir'])
 
-    # build the order struct
+    # Build the order struct
     order = buildOrder(Order())
 
-    # loop until findBottom returns none
+    # Loop until findBottom returns none
     bottom = findBottom(order)
     while bottom:
         makepkg(bottom)
